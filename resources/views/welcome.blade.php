@@ -80,7 +80,7 @@
             @endif
 
             <div class="content">
-                <a href="{{ route('report.download.excel') }}?tanggal=2024-01-20&lokasi=SITE_A" class="btn btn-success">
+                <a href="{{ route('report.download.excel') }}" class="btn btn-success">
                         <i class="fa fa-download"></i> Download Excel
                 </a>
                 <!-- <div class="title m-b-md">

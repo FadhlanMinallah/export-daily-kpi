@@ -21,19 +21,19 @@ use PhpOffice\PhpSpreadsheet\Chart\Legend;
 use PhpOffice\PhpSpreadsheet\Chart\PlotArea;
 use PhpOffice\PhpSpreadsheet\Chart\Title;
 use PhpOffice\PhpSpreadsheet\RichText\RichText;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 
 class DailyKPIExport implements FromCollection, WithEvents, WithColumnWidths, WithCharts, WithTitle
 {
-    protected string $tanggal;
-    protected string $lokasi;
     protected array $data;
+    protected string $sheetName;
+    protected int $violations_start_row;
 
-    public function __construct(string $tanggal, string $lokasi, array $data)
+    public function __construct(array $data, string $sheetName = '01')
     {
-        $this->tanggal = $tanggal;
-        $this->lokasi  = $lokasi;
-        $this->data    = $data;
+        $this->data = $data;
+        $this->sheetName = $sheetName;
     }
 
     /* =====================================================
@@ -46,7 +46,7 @@ class DailyKPIExport implements FromCollection, WithEvents, WithColumnWidths, Wi
 
     public function title(): string
     {
-        return '01';
+        return $this->sheetName; // Sheet Name
     }
 
     /* =====================================================
@@ -154,8 +154,8 @@ class DailyKPIExport implements FromCollection, WithEvents, WithColumnWidths, Wi
     {
         $sheet->setCellValue('B2', 'LAMPIRAN 3A');
         $sheet->setCellValue('B3', 'LAPORAN HARIAN OPERASIONAL GPS & DASHCAM');
-        $sheet->setCellValue('B4', 'TANGGAL  : ' . $this->tanggal);
-        $sheet->setCellValue('B5', 'LOKASI       : ' . $this->lokasi);
+        $sheet->setCellValue('B4', 'TANGGAL  : ' . $this->data['date'] ?? '');
+        $sheet->setCellValue('B5', 'LOKASI       : ' . $this->data['site'] ?? '');
 
         
         $sheet->getStyle('B2')->getFont()->setBold(true)->setSize(14);
@@ -193,21 +193,24 @@ class DailyKPIExport implements FromCollection, WithEvents, WithColumnWidths, Wi
 
         $this->applyHeaderStyle($sheet, 'B7:C7');
 
-        // Calculate percentages
-        $total = $this->data['gps_terpasang'];
-        $onlinePercent = $total > 0 ? round(($this->data['gps_online'] / $total) * 100) : 0;
-        $offlinePercent = $total > 0 ? round(($this->data['gps_offline'] / $total) * 100) : 0;
-
         $sheet->fromArray([
             ['Jumlah MT Terpasang GPS', $this->data['gps_terpasang'], ''],
             ['Online', $this->data['gps_online'], ''],
             ['Offline', $this->data['gps_offline'], ''],
-            ['% MT Online GPS', $this->data['gps_online_persen'] . '%', ''],
+            // ['% MT Online GPS', $this->data['gps_online_persen'] . '%', ''],
+            ['% MT Online GPS', null, ''],
         ], null, 'B8');
+
+
+        // Set Formula for GPS Table
+        $sheet->setCellValue('C11', '=IF(C8=0,0,ROUND(C9/C8,2))');
+        $sheet->getStyle('C11')->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_PERCENTAGE);
 
         $this->applyBodyStyle($sheet, 'B8:C11', Alignment::HORIZONTAL_LEFT);
         $this->applyHorizontalAlignment($sheet, 'B8:B11', Alignment::HORIZONTAL_LEFT);
         $this->applyHorizontalAlignment($sheet, 'C8:C11', Alignment::HORIZONTAL_RIGHT);
+
+        $sheet->getStyle('B11:F11')->getFont()->setBold(true)->setSize(11);
     }
 
     /* =====================================================
@@ -220,17 +223,16 @@ class DailyKPIExport implements FromCollection, WithEvents, WithColumnWidths, Wi
 
         $this->applyHeaderStyle($sheet, 'E7:F7');
 
-        // Calculate percentages
-        $total = $this->data['dashcam_terpasang'];
-        $onlinePercent = $total > 0 ? round(($this->data['dashcam_online'] / $total) * 100) : 0;
-        $offlinePercent = $total > 0 ? round(($this->data['dashcam_offline'] / $total) * 100) : 0;
-
         $sheet->fromArray([
             ['Jumlah MT Terpasang Dashcam', $this->data['dashcam_terpasang'], ''],
             ['Online', $this->data['dashcam_online'], ''],
             ['Offline', $this->data['dashcam_offline'], ''],
-            ['% MT Online GPS', $this->data['dashcam_online_persen'] . '%', ''],
+            ['% MT Online GPS', null, ''],
         ], null, 'E8');
+
+        // Set Formula for Dashcam Table
+        $sheet->setCellValue('F11', '=IF(F8=0,0,ROUND(F9/F8,2))');
+        $sheet->getStyle('F11')->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_PERCENTAGE);
 
         $this->applyBodyStyle($sheet, 'E8:F11', Alignment::HORIZONTAL_LEFT);
         $this->applyHorizontalAlignment($sheet, 'F8:F11', Alignment::HORIZONTAL_RIGHT);
@@ -247,6 +249,7 @@ class DailyKPIExport implements FromCollection, WithEvents, WithColumnWidths, Wi
         $title    = $config['title'] ?? 'KEGAGALAN OPERASI MOBIL TANGKI';
         $data     = $config['data'] ?? [];
         $minRows  = 13; // Minimum 13 baris body
+        $this->violations_start_row = $startRow + 2 + $minRows + 2 + 2; // startRow + headerRow + bodyRow + footerRow + rowSpacing
 
         $header1   = $startRow + 1;
         $header2   = $startRow + 2;
@@ -370,7 +373,7 @@ class DailyKPIExport implements FromCollection, WithEvents, WithColumnWidths, Wi
      ===================================================== */
     private function renderViolationSection($sheet): void
     {
-        $startRow = 44; // last col failures + 2
+        $startRow = $this->violations_start_row; // last col failures + 2
 
         // Data pelanggaran
         $violations = [
@@ -612,14 +615,14 @@ class DailyKPIExport implements FromCollection, WithEvents, WithColumnWidths, Wi
 
         $categories = new DataSeriesValues(
             DataSeriesValues::DATASERIES_TYPE_STRING,
-            "'01'!\${$categoryRange}",
+            "$this->sheetName!\${$categoryRange}",
             null,
             2
         );
 
         $values = new DataSeriesValues(
             DataSeriesValues::DATASERIES_TYPE_NUMBER,
-            "'01'!\${$valueRange}",
+            "$this->sheetName!\${$valueRange}",
             null,
             2
         );
@@ -675,7 +678,7 @@ class DailyKPIExport implements FromCollection, WithEvents, WithColumnWidths, Wi
         $seriesLabel = [
             new DataSeriesValues(
                 DataSeriesValues::DATASERIES_TYPE_STRING,
-                "'01'!\$B\$46",
+                "$this->sheetName!\$C\$45",
                 null,
                 1
             ),
@@ -683,14 +686,14 @@ class DailyKPIExport implements FromCollection, WithEvents, WithColumnWidths, Wi
         
         $categories = new DataSeriesValues(
             DataSeriesValues::DATASERIES_TYPE_STRING,
-            "'01'!\${$categoryRange}",
+            "$this->sheetName!\${$categoryRange}",
             null,
             3
         );
 
         $values = new DataSeriesValues(
             DataSeriesValues::DATASERIES_TYPE_NUMBER,
-            "'01'!\${$valueRange}",
+            "$this->sheetName!\${$valueRange}",
             null,
             3
         );
