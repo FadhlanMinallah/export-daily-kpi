@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\DailyKPIExport;
+use App\Exports\TimelyReportingExport;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -33,6 +34,23 @@ class ReportController extends Controller
             [
                 'includeCharts' => true,
             ]
+        );
+    }
+    
+    public function downloadTimelyReporting()
+    {
+        $data = [
+            'periode'   => 'Januari 2026',
+            'site'      => 'IT SURABAYA GROUP'
+
+        ];
+
+        $fileName = 'Timely_Reporting_' . $data['periode'] . '.xlsx';
+        
+        return Excel::download(
+            new TimelyReportingExport($data, 'timely_reporting'),
+            $fileName,
+            \Maatwebsite\Excel\Excel::XLSX,
         );
     }
 }
