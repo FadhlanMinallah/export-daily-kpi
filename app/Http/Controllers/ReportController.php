@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\DailyKPIExport;
+use App\Exports\SummaryExport;
 use App\Exports\TimelyReportingExport;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -208,6 +209,18 @@ class ReportController extends Controller
         
         return Excel::download(
             new TimelyReportingExport($data, 'timely_reporting'),
+            $fileName,
+            \Maatwebsite\Excel\Excel::XLSX,
+        );
+    }
+
+    public function downloadSummaryExport()
+    {
+        $fileName = 'Summary_Export.xlsx';
+        $data = [];
+        
+        return Excel::download(
+            new SummaryExport($data, 'Summary'),
             $fileName,
             \Maatwebsite\Excel\Excel::XLSX,
         );

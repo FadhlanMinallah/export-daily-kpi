@@ -18,3 +18,5 @@ Route::get('/', function () {
 Route::get('/daily-kpi-export', 'ReportController@downloadExcel')->name('report.download.excel');
 
 Route::get('/timely-kpi-export', 'ReportController@downloadTimelyReporting')->name('report.download.excel.timely');
+
+Route::get('/summary-export', 'ReportController@downloadSummaryExport')->name('report.download.summary');
