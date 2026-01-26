@@ -20,3 +20,5 @@ Route::get('/daily-kpi-export', 'ReportController@downloadExcel')->name('report.
 Route::get('/timely-kpi-export', 'ReportController@downloadTimelyReporting')->name('report.download.excel.timely');
 
 Route::get('/summary-export', 'ReportController@downloadSummaryExport')->name('report.download.summary');
+
+Route::get('/nilai-kpi-export', 'ReportController@downloadNilaiKpi')->name('report.download.nilai-kpi');

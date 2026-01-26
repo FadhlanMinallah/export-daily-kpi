@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\DailyKPIExport;
+use App\Exports\NilaiKpiExport;
 use App\Exports\SummaryExport;
 use App\Exports\TimelyReportingExport;
 use Illuminate\Http\Request;
@@ -221,6 +222,100 @@ class ReportController extends Controller
         
         return Excel::download(
             new SummaryExport($data, 'Summary'),
+            $fileName,
+            \Maatwebsite\Excel\Excel::XLSX,
+        );
+    }
+
+    public function downloadNilaiKpi()
+    {
+        $fileName = 'Nilai_KPI_Export.xlsx';
+        $data = [
+            'kegagalan_operasi' => [
+                ['value' => 0, 'percentage' => 110],
+                ['value' => 1, 'percentage' => 95],
+                ['value' => 2, 'percentage' => 90],
+                ['value' => 3, 'percentage' => 85],
+                ['value' => 4, 'percentage' => 80],
+                ['value' => 5, 'percentage' => 75],
+                ['value' => 6, 'percentage' => 70],
+                ['value' => 7, 'percentage' => 65],
+                ['value' => 8, 'percentage' => 60],
+                ['value' => 9, 'percentage' => 55],
+                ['value' => 10, 'percentage' => 50],
+                ['value' => 11, 'percentage' => 45],
+                ['value' => 12, 'percentage' => 40],
+                ['value' => 13, 'percentage' => 35],
+                ['value' => 14, 'percentage' => 30],
+                ['value' => 15, 'percentage' => 25],
+                ['value' => 16, 'percentage' => 20],
+                ['value' => 17, 'percentage' => 15],
+                ['value' => 18, 'percentage' => 10],
+                ['value' => 19, 'percentage' => 5],
+                ['value' => 20, 'percentage' => 0],
+            ],
+
+            'response_time_keluhan' => [
+                ['time' => 0, 'percentage' => 110],
+                ['time' => -1, 'percentage' => 110],
+                ['time' => -2, 'percentage' => 100],
+                ['time' => -3, 'percentage' => 100],
+                ['time' => -4, 'percentage' => 75],
+                ['time' => -5, 'percentage' => 50],
+                ['time' => -6, 'percentage' => 25],
+                ['time' => -7, 'percentage' => 0],
+                ['time' => -8, 'percentage' => 0],
+            ],
+
+            'tindak_lanjut_temuan' => [
+                ['time' => 0, 'percentage' => 110],
+                ['time' => -1, 'percentage' => 95],
+                ['time' => -2, 'percentage' => 95],
+                ['time' => -3, 'percentage' => 95],
+                ['time' => -4, 'percentage' => 95],
+                ['time' => -5, 'percentage' => 90],
+                ['time' => -6, 'percentage' => 90],
+                ['time' => -7, 'percentage' => 85],
+                ['time' => -8, 'percentage' => 85],
+                ['time' => -9, 'percentage' => 80],
+                ['time' => -10, 'percentage' => 80],
+                ['time' => -11, 'percentage' => 75],
+                ['time' => -12, 'percentage' => 75],
+                ['time' => -13, 'percentage' => 70],
+                ['time' => -14, 'percentage' => 70],
+                ['time' => -15, 'percentage' => 65],
+                ['time' => -16, 'percentage' => 65],
+                ['time' => -17, 'percentage' => 60],
+                ['time' => -18, 'percentage' => 60],
+                ['time' => -19, 'percentage' => 55],
+                ['time' => -20, 'percentage' => 55],
+                ['time' => -21, 'percentage' => 50],
+                ['time' => -22, 'percentage' => 50],
+                ['time' => -23, 'percentage' => 45],
+                ['time' => -24, 'percentage' => 45],
+                ['time' => -25, 'percentage' => 40],
+                ['time' => -26, 'percentage' => 40],
+                ['time' => -27, 'percentage' => 35],
+                ['time' => -28, 'percentage' => 35],
+                ['time' => -29, 'percentage' => 30],
+                ['time' => -30, 'percentage' => 30],
+                ['time' => -31, 'percentage' => 25],
+                ['time' => -32, 'percentage' => 25],
+                ['time' => -33, 'percentage' => 20],
+                ['time' => -34, 'percentage' => 20],
+                ['time' => -35, 'percentage' => 15],
+                ['time' => -36, 'percentage' => 15],
+                ['time' => -37, 'percentage' => 10],
+                ['time' => -38, 'percentage' => 10],
+                ['time' => -39, 'percentage' => 5],
+                ['time' => -40, 'percentage' => 5],
+                ['time' => -41, 'percentage' => 0],
+            ]
+
+        ];
+        
+        return Excel::download(
+            new NilaiKpiExport($data, 'Nilai KPI'),
             $fileName,
             \Maatwebsite\Excel\Excel::XLSX,
         );
