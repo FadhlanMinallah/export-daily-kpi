@@ -53,7 +53,7 @@ class TimelyReportingExport implements FromCollection, WithEvents, WithColumnWid
                 $drawing = new Drawing();
                 $drawing->setName('Image');
                 $drawing->setDescription('Image N2:N4');
-                $drawing->setPath(public_path('images/pertamina-logo.png'));
+                $drawing->setPath(public_path('pertamina-patra-logistik.png'));
 
                 // ukuran image (pixel)
                 $drawing->setWidth(112);
@@ -126,69 +126,90 @@ class TimelyReportingExport implements FromCollection, WithEvents, WithColumnWid
      ===================================================== */
     private function renderItemTable($sheet): void
     {
-        // ================= HEADER =================
-        // Column "No"
-        $sheet->mergeCells('A6:A7');
-        $sheet->setCellValue('A6', 'No');
+        // ===== HEADER =====
+        $sheet->mergeCells('A6:A7')->setCellValue('A6', 'No');
+        $sheet->mergeCells('B6:B7')->setCellValue('B6', 'Item Check');
+        $sheet->mergeCells('C6:AG6')->setCellValue('C6', 'Jan-26');
 
-        // Column "Item Check"
-        $sheet->mergeCells('B6:B7');
-        $sheet->setCellValue('B6', 'Item Check');
-
-        // Column "Periode"
-        $sheet->mergeCells('C6:AG6');
-        $sheet->setCellValue('C6', '01/01/2026');
-
-        // Column "Date"
-        $colPeriode = 'C';
-        $rowHeader2 = 7;
-        for ($i=1; $i <= 31; $i++) { 
-            $sheet->setCellValue($colPeriode.$rowHeader2, $i);
-            $colPeriode++;
+        // tanggal 1–31
+        $col = 'C';
+        for ($i = 1; $i <= 31; $i++) {
+            $sheet->setCellValue($col.'7', $i);
+            $col++;
         }
 
-        // Column "Rata-rata Bulanan"
-        $sheet->mergeCells('AH6:AH7');
-        $sheet->setCellValue('AH6', 'Rata-rata Bulanan');
-
-        // Column "Keterangan"
-        $sheet->mergeCells('AI6:AI7');
-        $sheet->setCellValue('AI6', 'Keterangan');
+        $sheet->mergeCells('AH6:AH7')->setCellValue('AH6', "Rata-rata\nBulanan");
+        $sheet->mergeCells('AI6:AI7')->setCellValue('AI6', 'Keterangan');
 
         $sheet->getStyle('AH6')->getAlignment()->setWrapText(true);
         $sheet->getStyle('A6:AI7')->getFont()->setBold(true)->setSize(10);
         $this->applyHeaderStyle($sheet, 'A6:AI7');
 
-        // ================= BODY =================
-        $data = [];
+        // ===== BODY =====
+        $rowStart = 8;
+        $no = 1;
 
-        $row = [
-            'item_check' => 'Perangkat Status Offline GPS',
-        ];
+        foreach ($this->data['items'] as $item) {
 
-        for ($i = 1; $i <= 31; $i++) {
-            $row[(string)$i] = rand(0, 5) . '%';
-        }
+            // No
+            // $sheet->setCellValue("A{$rowStart}", $no);
 
-        $row['avg_month']  = '5%';
-        $row['keterangan'] = 'Persentase Perangkat Status Offline GPS';
+            // Item Check
+            $sheet->setCellValue("B{$rowStart}", $item['item']);
 
-        $data[] = $row;
+            // isi tanggal
+            $col = 'C';
+            for ($d = 1; $d <= 31; $d++) {
 
-        $colStartItemCheck = 'B';
-        $rowStartItemCheck = 8;
+                $value = $item['values'][$d] ?? null;
 
-        foreach ($data as $key => $row) {
-            foreach ($row as $key => $column) {
-                $sheet->setCellValue($colStartItemCheck.$rowStartItemCheck, $column);
-                $colStartItemCheck++;
+                if ($value !== null) {
+                    $sheet->setCellValue($col.$rowStart, $value);
+
+                    if ($item['is_percent']) {
+                        $sheet->getStyle($col.$rowStart)
+                            ->getNumberFormat()
+                            ->setFormatCode(NumberFormat::FORMAT_PERCENTAGE);
+                    }
+                }
+
+                $col++;
             }
-            $rowStartItemCheck++;
+
+            // Rata-rata bulanan (FORMULA)
+            $sheet->setCellValue(
+                "AH{$rowStart}",
+                "=IFERROR(AVERAGE(C{$rowStart}:AG{$rowStart}),\"#DIV/0!\")"
+            );
+
+            // Keterangan
+            $sheet->setCellValue("AI{$rowStart}", $item['keterangan']);
+
+            // style body
+            $this->applyBorder($sheet, "A{$rowStart}:AI{$rowStart}");
+            $sheet->getStyle("A{$rowStart}:AH{$rowStart}")
+                ->getAlignment()
+                ->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+            $sheet->getStyle("B{$rowStart}:AI{$rowStart}")
+                ->getAlignment()
+                ->setVertical(Alignment::VERTICAL_CENTER);
+
+            if ($item['is_percent']) {
+                $sheet->getStyle("B{$rowStart}:AI{$rowStart}")->applyFromArray([
+                    'font' => ['bold' => true, 'color' => ['rgb' => '000000']],
+                    'fill' => [
+                        'fillType' => Fill::FILL_SOLID,
+                        'startColor' => ['rgb' => '71a8e0'],
+                    ],
+                ]);
+            }
+
+            $rowStart++;
+            $no++;
         }
-
-        $this->applyHorizontalAlignment($sheet, 'C8:AH22', Alignment::HORIZONTAL_CENTER);
+        $this->applyHorizontalAlignment($sheet, 'B8:B21', Alignment::HORIZONTAL_LEFT);
     }
-
 
     /* =====================================================
      | STYLES
@@ -263,14 +284,14 @@ class TimelyReportingExport implements FromCollection, WithEvents, WithColumnWid
     public function columnWidths(): array
     {
         return [
-            'A' => 4, 'B' => 43.33, 'C' => 5.33, 'D' => 5.33,
-            'E' => 5.33, 'F' => 5.33, 'G' => 5.33, 'H' => 5.33,
-            'I' => 5.33, 'J' => 5.33, 'K' => 5.33, 'L' => 5.33,
-            'M' => 5.33, 'N' => 5.33, 'O' => 5.33, 'P' => 5.33, 'Q' => 5.33,
-            'R' => 5.33, 'S' => 5.33, 'T' => 5.33, 'U' => 5.33, 'V' => 5.33,
-            'W' => 5.33, 'X' => 5.33, 'Y' => 5.33, 'Z' => 5.33, 'AA' => 5.33,
-            'AB' => 5.33, 'AC' => 5.33, 'AD' => 5.33, 'AE' => 5.33, 'AF' => 5.33,
-            'AG' => 5.33, 'AH' => 12, 'AI' => 54.33
+            'A' => 5.50, 'B' => 43.33, 'C' => 5.80, 'D' => 5.80,
+            'E' => 5.80, 'F' => 5.80, 'G' => 5.80, 'H' => 5.80,
+            'I' => 5.80, 'J' => 5.80, 'K' => 5.80, 'L' => 5.80,
+            'M' => 5.80, 'N' => 5.80, 'O' => 5.80, 'P' => 5.80, 'Q' => 5.80,
+            'R' => 5.80, 'S' => 5.80, 'T' => 5.80, 'U' => 5.80, 'V' => 5.80,
+            'W' => 5.80, 'X' => 5.80, 'Y' => 5.80, 'Z' => 5.80, 'AA' => 5.80,
+            'AB' => 5.80, 'AC' => 5.80, 'AD' => 5.80, 'AE' => 5.80, 'AF' => 5.80,
+            'AG' => 5.80, 'AH' => 12, 'AI' => 54.33
         ];
     }
 }

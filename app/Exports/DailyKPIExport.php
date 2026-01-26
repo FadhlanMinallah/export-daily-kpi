@@ -64,7 +64,7 @@ class DailyKPIExport implements FromCollection, WithEvents, WithColumnWidths, Wi
                 $drawing = new Drawing();
                 $drawing->setName('Image');
                 $drawing->setDescription('Image N2:N4');
-                $drawing->setPath(public_path('images/pertamina-logo.png'));
+                $drawing->setPath(public_path('pertamina-patra-logistik.png'));
 
                 // ukuran image (pixel)
                 $drawing->setWidth(112);
