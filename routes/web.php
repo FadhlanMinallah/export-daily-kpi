@@ -22,3 +22,5 @@ Route::get('/timely-kpi-export', 'ReportController@downloadTimelyReporting')->na
 Route::get('/summary-export', 'ReportController@downloadSummaryExport')->name('report.download.summary');
 
 Route::get('/nilai-kpi-export', 'ReportController@downloadNilaiKpi')->name('report.download.nilai-kpi');
+
+Route::get('/timely-reporting-sum', 'ReportController@downloadTimelyReportingSum')->name('report.timely.sum');

@@ -6,6 +6,7 @@ use App\Exports\DailyKPIExport;
 use App\Exports\NilaiKpiExport;
 use App\Exports\SummaryExport;
 use App\Exports\TimelyReportingExport;
+use App\Exports\TimelyReportingSumExport;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -316,6 +317,107 @@ class ReportController extends Controller
         
         return Excel::download(
             new NilaiKpiExport($data, 'Nilai KPI'),
+            $fileName,
+            \Maatwebsite\Excel\Excel::XLSX,
+        );
+    }
+
+    public function downloadTimelyReportingSum()
+    {
+        $fileName = 'Timely_Reporting_Sum.xlsx';
+        $data = [
+            'periode'   => 'SEPTEMBER 2025',
+            'site'      => 'IT Jakarta',
+            'item'      => [
+                [
+                    'tanggal'           => '01/09/2025',
+                    'target_pelaporan'  => '02/09/2025  07.00.00',
+                    'realisasi_laporan' => '02/09/2025  07.00.00',
+                    'selisih_waktu'     => '00 Hari 0.00.00',
+                    'persentase'        => 110
+                ],
+                [
+                    'tanggal'           => '02/09/2025',
+                    'target_pelaporan'  => '02/09/2025  07.00.00',
+                    'realisasi_laporan' => '02/09/2025  07.00.00',
+                    'selisih_waktu'     => '00 Hari 0.00.00',
+                    'persentase'        => 110
+                ],
+                [
+                    'tanggal'           => '03/09/2025',
+                    'target_pelaporan'  => '02/09/2025  07.00.00',
+                    'realisasi_laporan' => '02/09/2025  07.00.00',
+                    'selisih_waktu'     => '00 Hari 0.00.00',
+                    'persentase'        => 110
+                ],
+                [
+                    'tanggal'           => '04/09/2025',
+                    'target_pelaporan'  => '02/09/2025  07.00.00',
+                    'realisasi_laporan' => '02/09/2025  07.00.00',
+                    'selisih_waktu'     => '00 Hari 0.00.00',
+                    'persentase'        => 110
+                ],
+                [
+                    'tanggal'           => '05/09/2025',
+                    'target_pelaporan'  => '02/09/2025  07.00.00',
+                    'realisasi_laporan' => '02/09/2025  07.00.00',
+                    'selisih_waktu'     => '00 Hari 0.00.00',
+                    'persentase'        => 110
+                ],
+                [
+                    'tanggal'           => '06/09/2025',
+                    'target_pelaporan'  => '02/09/2025  07.00.00',
+                    'realisasi_laporan' => '02/09/2025  07.00.00',
+                    'selisih_waktu'     => '00 Hari 0.00.00',
+                    'persentase'        => 110
+                ],
+                [
+                    'tanggal'           => '07/09/2025',
+                    'target_pelaporan'  => '02/09/2025  07.00.00',
+                    'realisasi_laporan' => '02/09/2025  07.00.00',
+                    'selisih_waktu'     => '00 Hari 0.00.00',
+                    'persentase'        => 110
+                ],
+                [
+                    'tanggal'           => '08/09/2025',
+                    'target_pelaporan'  => '02/09/2025  07.00.00',
+                    'realisasi_laporan' => '02/09/2025  07.00.00',
+                    'selisih_waktu'     => '00 Hari 0.00.00',
+                    'persentase'        => 110
+                ],
+                [
+                    'tanggal'           => '09/09/2025',
+                    'target_pelaporan'  => '02/09/2025  07.00.00',
+                    'realisasi_laporan' => '02/09/2025  07.00.00',
+                    'selisih_waktu'     => '00 Hari 0.00.00',
+                    'persentase'        => 110
+                ],
+                [
+                    'tanggal'           => '10/09/2025',
+                    'target_pelaporan'  => '02/09/2025  07.00.00',
+                    'realisasi_laporan' => '02/09/2025  07.00.00',
+                    'selisih_waktu'     => '00 Hari 0.00.00',
+                    'persentase'        => 110
+                ],
+                [
+                    'tanggal'           => '11/09/2025',
+                    'target_pelaporan'  => '02/09/2025  07.00.00',
+                    'realisasi_laporan' => '02/09/2025  07.00.00',
+                    'selisih_waktu'     => '00 Hari 0.00.00',
+                    'persentase'        => 110
+                ],
+                [
+                    'tanggal'           => '12/09/2025',
+                    'target_pelaporan'  => '02/09/2025  07.00.00',
+                    'realisasi_laporan' => '02/09/2025  07.00.00',
+                    'selisih_waktu'     => '00 Hari 0.00.00',
+                    'persentase'        => 110
+                ],
+            ]
+        ];
+
+        return Excel::download(
+            new TimelyReportingSumExport($data, 'Timely_Reporting_Sum'),
             $fileName,
             \Maatwebsite\Excel\Excel::XLSX,
         );
