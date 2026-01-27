@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\BappExport;
 use App\Exports\DailyKPIExport;
 use App\Exports\NilaiKpiExport;
 use App\Exports\SummaryExport;
@@ -421,5 +422,19 @@ class ReportController extends Controller
             $fileName,
             \Maatwebsite\Excel\Excel::XLSX,
         );
+    }
+
+    public function downloadBappExport()
+    {
+        $fileName = 'BAPP_Export.xlsx';
+
+        $data = [];
+
+        return Excel::download(
+            new BappExport($data, 'BAPP_Export'),
+            $fileName,
+            \Maatwebsite\Excel\Excel::XLSX,
+        );
+
     }
 }
