@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\BappExport;
 use App\Exports\DailyKPIExport;
+use App\Exports\KegagalanPenormalanExport;
 use App\Exports\NilaiKpiExport;
 use App\Exports\SummaryExport;
 use App\Exports\TimelyReportingExport;
@@ -435,6 +436,69 @@ class ReportController extends Controller
             $fileName,
             \Maatwebsite\Excel\Excel::XLSX,
         );
+    }
 
+    public function downloadKegagalanPenormalan()
+    {
+        $fileName = 'Kegagalan_dan_Penormalan_Export.xlsx';
+
+        $data = [
+            'periode' => 'SEPTEMBER 2025',
+            'site'    => 'IT Jakarta',
+            'item' => [
+                [
+                    'date'            => '2026-01-01',
+                    'count_blackout'  => 1,
+                    'value_kpi'       => 95,
+                    'normaly_time'    => 1,
+                    'value_kpi_normal'=> 95
+                ],
+                [
+                    'date'            => '2026-01-02',
+                    'count_blackout'  => 1,
+                    'value_kpi'       => 95,
+                    'normaly_time'    => 1,
+                    'value_kpi_normal'=> 95
+                ],
+                [
+                    'date'            => '2026-01-03',
+                    'count_blackout'  => 4,
+                    'value_kpi'       => 80,
+                    'normaly_time'    => 4,
+                    'value_kpi_normal'=> 80
+                ],
+                [
+                    'date'            => '2026-01-04',
+                    'count_blackout'  => 3,
+                    'value_kpi'       => 85,
+                    'normaly_time'    => 3,
+                    'value_kpi_normal'=> 85
+                ],
+                [
+                    'date'            => '2026-01-05',
+                    'count_blackout'  => 5,
+                    'value_kpi'       => 75,
+                    'normaly_time'    => 5,
+                    'value_kpi_normal'=> 75
+                ],
+                [
+                    'date'            => '2026-01-06',
+                    'count_blackout'  => 2,
+                    'value_kpi'       => 90,
+                    'normaly_time'    => 2,
+                    'value_kpi_normal'=> 90
+                ],
+            ],
+            'total_blackout'        => 108,
+            'total_kpi_kegagalan'   => 84, // percentage
+            'total_time_penormalan' => 108,
+            'total_kpi_penormalan'  => 84 // percentage
+        ];
+
+        return Excel::download(
+            new KegagalanPenormalanExport($data, 'Kegagalan_dan_Penormalan'),
+            $fileName,
+            \Maatwebsite\Excel\Excel::XLSX,
+        );
     }
 }

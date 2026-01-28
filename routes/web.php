@@ -26,3 +26,5 @@ Route::get('/nilai-kpi-export', 'ReportController@downloadNilaiKpi')->name('repo
 Route::get('/timely-reporting-sum', 'ReportController@downloadTimelyReportingSum')->name('report.download.timely-sum');
 
 Route::get('/bapp-export', 'ReportController@downloadBappExport')->name('report.download.bapp');
+
+Route::get('/kegagalan-penormalan-export', 'ReportController@downloadKegagalanPenormalan')->name('report.download.kegagalan-penormalan');
