@@ -30,3 +30,5 @@ Route::get('/bapp-export', 'ReportController@downloadBappExport')->name('report.
 Route::get('/kegagalan-penormalan-export', 'ReportController@downloadKegagalanPenormalan')->name('report.download.kegagalan-penormalan');
 
 Route::get('/kpi-export', 'ReportController@downloadKpiExport')->name('report.download.kpi');
+
+Route::get('/response-time-export', 'ReportController@downloadResponseTimeExport')->name('report.download.response-time');

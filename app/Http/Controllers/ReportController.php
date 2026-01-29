@@ -7,6 +7,7 @@ use App\Exports\DailyKPIExport;
 use App\Exports\KegagalanPenormalanExport;
 use App\Exports\KpiExport;
 use App\Exports\NilaiKpiExport;
+use App\Exports\ResponseTimeExport;
 use App\Exports\SummaryExport;
 use App\Exports\TimelyReportingExport;
 use App\Exports\TimelyReportingSumExport;
@@ -509,6 +510,17 @@ class ReportController extends Controller
         $data = [];
         return Excel::download(
             new KpiExport($data, 'KPI_Export'),
+            $fileName,
+            \Maatwebsite\Excel\Excel::XLSX,
+        );
+    }
+
+    public function downloadResponseTimeExport()
+    {
+        $fileName = 'Resp_Time.xlsx';
+        $data = [];
+        return Excel::download(
+            new ResponseTimeExport($data, 'Resp_Time'),
             $fileName,
             \Maatwebsite\Excel\Excel::XLSX,
         );
