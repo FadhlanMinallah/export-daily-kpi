@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\BappExport;
 use App\Exports\DailyKPIExport;
 use App\Exports\KegagalanPenormalanExport;
+use App\Exports\KpiExport;
 use App\Exports\NilaiKpiExport;
 use App\Exports\SummaryExport;
 use App\Exports\TimelyReportingExport;
@@ -497,6 +498,17 @@ class ReportController extends Controller
 
         return Excel::download(
             new KegagalanPenormalanExport($data, 'Kegagalan_dan_Penormalan'),
+            $fileName,
+            \Maatwebsite\Excel\Excel::XLSX,
+        );
+    }
+
+    public function downloadKpiExport()
+    {
+        $fileName = 'KPI_Export.xlsx';
+        $data = [];
+        return Excel::download(
+            new KpiExport($data, 'KPI_Export'),
             $fileName,
             \Maatwebsite\Excel\Excel::XLSX,
         );
