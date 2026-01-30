@@ -23,6 +23,7 @@ use PhpOffice\PhpSpreadsheet\Chart\Title;
 use PhpOffice\PhpSpreadsheet\RichText\RichText;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 
 class DailyKPIExport implements FromCollection, WithEvents, WithColumnWidths, WithCharts, WithTitle
 {
@@ -326,43 +327,43 @@ class DailyKPIExport implements FromCollection, WithEvents, WithColumnWidths, Wi
         $sheet->setCellValue("{$startCol}{$footer1}", 'Jumlah MT');
 
         $sheet->mergeCells(
-            $this->col($startCol, 1) . $footer1 . ':' .
-            $this->col($startCol, 2) . $footer1
+            $this->shiftColumn($startCol, 1) . $footer1 . ':' .
+            $this->shiftColumn($startCol, 2) . $footer1
         );
         $sheet->setCellValue(
-            $this->col($startCol, 1) . $footer1,
+            $this->shiftColumn($startCol, 1) . $footer1,
             'GPS NOT ACTIVE'
         );
 
         $sheet->setCellValue(
-            $this->col($startCol, 3) . $footer1,
+            $this->shiftColumn($startCol, 3) . $footer1,
             'Dashcam NOT ACTIVE'
         );
 
         $sheet->mergeCells(
-            $this->col($startCol, 4) . $footer1 . ':' .
-            $this->col($startCol, 6) . $footer1
+            $this->shiftColumn($startCol, 4) . $footer1 . ':' .
+            $this->shiftColumn($startCol, 6) . $footer1
         );
 
         $sheet->setCellValue("{$startCol}{$footer2}", count($data));
 
         $sheet->mergeCells(
-            $this->col($startCol, 1) . $footer2 . ':' .
-            $this->col($startCol, 2) . $footer2
+            $this->shiftColumn($startCol, 1) . $footer2 . ':' .
+            $this->shiftColumn($startCol, 2) . $footer2
         );
         $sheet->setCellValue(
-            $this->col($startCol, 1) . $footer2,
+            $this->shiftColumn($startCol, 1) . $footer2,
             10
         );
 
         $sheet->setCellValue(
-            $this->col($startCol, 3) . $footer2,
+            $this->shiftColumn($startCol, 3) . $footer2,
             14
         );
 
         $sheet->mergeCells(
-            $this->col($startCol, 4) . $footer2 . ':' .
-            $this->col($startCol, 6) . $footer2
+            $this->shiftColumn($startCol, 4) . $footer2 . ':' .
+            $this->shiftColumn($startCol, 6) . $footer2
         );
 
         $this->applyFooterStyle($sheet, "{$startCol}{$footer1}:{$endCol}{$footer2}");
@@ -572,9 +573,10 @@ class DailyKPIExport implements FromCollection, WithEvents, WithColumnWidths, Wi
             ->getFont()->setName('Arial');
     }
 
-    private function col(string $col, int $offset = 0): string
+    private function shiftColumn(string $column, int $offset = 0): string
     {
-        return chr(ord($col) + $offset);
+        $index = Coordinate::columnIndexFromString($column);
+        return Coordinate::stringFromColumnIndex($index + $offset);
     }
 
     /* =====================================================

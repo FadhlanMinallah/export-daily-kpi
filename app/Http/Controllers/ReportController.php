@@ -6,6 +6,7 @@ use App\Exports\BappExport;
 use App\Exports\DailyKPIExport;
 use App\Exports\KegagalanPenormalanExport;
 use App\Exports\KpiExport;
+use App\Exports\LampiranNopolExport;
 use App\Exports\NilaiKpiExport;
 use App\Exports\ResponseTimeExport;
 use App\Exports\SummaryExport;
@@ -521,6 +522,17 @@ class ReportController extends Controller
         $data = [];
         return Excel::download(
             new ResponseTimeExport($data, 'Resp_Time'),
+            $fileName,
+            \Maatwebsite\Excel\Excel::XLSX,
+        );
+    }
+
+    public function downloadLampiranNopolExport()
+    {
+        $fileName = 'Lampiran_Nopol.xlsx';
+        $data = [];
+        return Excel::download(
+            new LampiranNopolExport($data, 'Lampiran_Nopol'),
             $fileName,
             \Maatwebsite\Excel\Excel::XLSX,
         );

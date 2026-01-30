@@ -32,3 +32,5 @@ Route::get('/kegagalan-penormalan-export', 'ReportController@downloadKegagalanPe
 Route::get('/kpi-export', 'ReportController@downloadKpiExport')->name('report.download.kpi');
 
 Route::get('/response-time-export', 'ReportController@downloadResponseTimeExport')->name('report.download.response-time');
+
+Route::get('/lampiran-nopol-export', 'ReportController@downloadLampiranNopolExport')->name('report.download.lampiran-nopol');
